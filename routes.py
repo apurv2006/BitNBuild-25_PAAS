@@ -42,16 +42,14 @@ def login():
 @bp.route("/generate-recipe", methods=["POST"])
 def generate_recipe():
     data = request.get_json()
-    if not data or "user_id" not in data or "ingredients" not in data:
-        return jsonify({"error": "'user_id' and 'ingredients' are required"}), 400
+    
+    # Ensure we have the required fields
+    if not data or "ingredients" not in data:
+        return jsonify({"error": "'ingredients' field is required"}), 400
 
-    user_id = data["user_id"]
-    ingredients = data["ingredients"]
-
-    # Fetch full user profile from MySQL
-    user_profile = get_user_by_id(user_id)
-    if not user_profile:
-        return jsonify({"error": "User profile not found"}), 404
+    # The rest of the data is treated as the user profile
+    user_profile = data.copy()
+    ingredients = user_profile.pop("ingredients")  # remove ingredients from user profile
 
     try:
         # Pass the user profile and ingredients to the GourmetNet engine

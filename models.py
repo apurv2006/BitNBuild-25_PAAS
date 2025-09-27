@@ -16,7 +16,7 @@ def check_password(password, stored_hash) -> bool:
     return hash_password(password) == stored_hash
 
 # --- User Functions ---
-
+# This is the user function
 def create_user(data):
     """Create a new user in the database."""
     cur = mysql.connection.cursor()
@@ -63,7 +63,7 @@ def get_user_by_id(user_id):
 
     if not user:
         return None
-
+    
     # Map cursor result to a dictionary
     keys = ["id", "username", "email", "password_hash", "allergies", "diet", "favorite_cuisines",
             "adventurousness", "spice_level", "flavor_profile", "ingredients_loved", "ingredients_hated",
