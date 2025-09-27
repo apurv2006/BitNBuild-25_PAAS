@@ -13,6 +13,18 @@ function RecipeGenerator() {
     primary_goal: "",
   });
 
+  // Default preferences (simulate logged-in user preferences)
+  const defaultPreferences = {
+    allergies: ["Gluten"],
+    diet: "Vegetarian",
+    favorite_cuisine: "Italian, Mexican",
+    adventurousness: "3",
+    spice_level: "Medium",
+    ingredients_love: "Tomato, Cheese",
+    ingredients_hate: "Broccoli",
+    primary_goal: "Healthy",
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
@@ -28,9 +40,30 @@ function RecipeGenerator() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e?.preventDefault(); // optional when triggered programmatically
     console.log("Recipe Form Data:", formData); // send to backend
-    setShowForm(false); // auto-close after submit
+    setShowForm(false); // close modal
+  };
+
+  // Fill form with default preferences and submit automatically
+  const handleUsePreferences = () => {
+    setFormData(defaultPreferences);
+    setShowForm(false); // no need to show modal
+    handleSubmit(); // auto-submit
+  };
+
+  const handleTryNew = () => {
+    setFormData({
+      allergies: [],
+      diet: "",
+      favorite_cuisine: "",
+      adventurousness: "",
+      spice_level: "",
+      ingredients_love: "",
+      ingredients_hate: "",
+      primary_goal: "",
+    });
+    setShowForm(true);
   };
 
   return (
@@ -38,13 +71,15 @@ function RecipeGenerator() {
       id="recipe-generator"
       className="min-h-screen flex flex-col items-center justify-start bg-base-100 p-10 relative"
     >
-      {/* Try New Recipe Button */}
-      <button
-        className="btn btn-primary mb-4 absolute top-4 left-1/2 transform -translate-x-1/2"
-        onClick={() => setShowForm(true)}
-      >
-        Try New Recipe
-      </button>
+      {/* Buttons */}
+      <div className="flex gap-4 mb-4 absolute top-4 left-1/2 transform -translate-x-1/2">
+        <button className="btn btn-primary" onClick={handleTryNew}>
+          Try New Recipe
+        </button>
+        <button className="btn btn-secondary" onClick={handleUsePreferences}>
+          Use My Preferences
+        </button>
+      </div>
 
       {/* Form Modal */}
       {showForm && (
@@ -56,7 +91,9 @@ function RecipeGenerator() {
             >
               ✕
             </button>
-            <h2 className="text-xl font-bold mb-4 text-center">Recipe Preferences</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">
+              Recipe Preferences
+            </h2>
             <form className="space-y-3" onSubmit={handleSubmit}>
               {/* Allergies */}
               <div>
@@ -68,6 +105,7 @@ function RecipeGenerator() {
                         type="checkbox"
                         name="allergies"
                         value={item}
+                        checked={formData.allergies.includes(item)}
                         onChange={handleChange}
                       />
                       {item}
@@ -80,6 +118,7 @@ function RecipeGenerator() {
               <select
                 name="diet"
                 className="select select-bordered w-full"
+                value={formData.diet}
                 onChange={handleChange}
               >
                 <option value="">Select Diet</option>
@@ -94,6 +133,7 @@ function RecipeGenerator() {
                 name="favorite_cuisine"
                 placeholder="Favorite Cuisines (comma separated)"
                 className="input input-bordered w-full"
+                value={formData.favorite_cuisine}
                 onChange={handleChange}
                 required
               />
@@ -104,6 +144,7 @@ function RecipeGenerator() {
                 name="adventurousness"
                 placeholder="Adventurousness (1-5)"
                 className="input input-bordered w-full"
+                value={formData.adventurousness}
                 onChange={handleChange}
                 required
               />
@@ -112,6 +153,7 @@ function RecipeGenerator() {
               <select
                 name="spice_level"
                 className="select select-bordered w-full"
+                value={formData.spice_level}
                 onChange={handleChange}
               >
                 <option value="">Spice Level</option>
@@ -126,6 +168,7 @@ function RecipeGenerator() {
                 name="ingredients_love"
                 placeholder="Ingredients you love"
                 className="input input-bordered w-full"
+                value={formData.ingredients_love}
                 onChange={handleChange}
               />
               <input
@@ -133,6 +176,7 @@ function RecipeGenerator() {
                 name="ingredients_hate"
                 placeholder="Ingredients you dislike"
                 className="input input-bordered w-full"
+                value={formData.ingredients_hate}
                 onChange={handleChange}
               />
 
@@ -140,6 +184,7 @@ function RecipeGenerator() {
               <select
                 name="primary_goal"
                 className="select select-bordered w-full"
+                value={formData.primary_goal}
                 onChange={handleChange}
               >
                 <option value="">Primary Goal</option>
@@ -158,7 +203,9 @@ function RecipeGenerator() {
 
       {/* Placeholder for backend recipe output */}
       <div className="mt-20 w-full flex flex-col items-center">
-        <p className="text-gray-700">(Recipe output from backend will appear here)</p>
+        <p className="text-gray-700">
+          (Recipe output from backend will appear here)
+        </p>
       </div>
     </section>
   );
