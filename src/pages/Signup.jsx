@@ -31,11 +31,48 @@ function Signup({ onSignupSuccess }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup Data:", formData);
-    toast.success("Signup Successful!");
-    onSignupSuccess({ username: formData.username }); // ← send username to App.jsx
+
+    // 🔄 Transform to match API schema
+    const payload = {
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      allergies: formData.allergies,
+      diet: formData.diet,
+      favorite_cuisines: formData.favorite_cuisine
+        .split(",")
+        .map((c) => c.trim())
+        .filter((c) => c), // clean array
+      adventurousness: parseInt(formData.adventurousness) || 3,
+      spice_level: formData.spice_level,
+      flavor_profile: {
+        savory: 5, // 🔧 these could be collected via sliders later
+        sweet: 2,
+        sour: 4,
+      },
+      ingredients_loved: formData.ingredients_love,
+      ingredients_hated: formData.ingredients_hate,
+      primary_goal: formData.primary_goal,
+    };
+
+    try {
+      const res = await fetch("http://127.0.0.1:5000/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error("Signup failed");
+
+      const userData = await res.json();
+      toast.success("Signup Successful!");
+      onSignupSuccess(userData); // pass full user object to parent
+    } catch (err) {
+      console.error("Signup error:", err);
+      toast.error("Signup Failed!");
+    }
   };
 
   return (
@@ -108,14 +145,16 @@ function Signup({ onSignupSuccess }) {
             onChange={handleChange}
           />
 
-          {/* Adventurousness (Text input instead of range) */}
+          {/* Adventurousness */}
           <input
-            type="text"
+            type="number"
             name="adventurousness"
+            min="1"
+            max="5"
             placeholder="Adventurousness (1-5)"
             className="input input-bordered w-full"
-            onChange={handleChange}
             value={formData.adventurousness}
+            onChange={handleChange}
           />
 
           {/* Spice Level */}
@@ -153,7 +192,7 @@ function Signup({ onSignupSuccess }) {
             onChange={handleChange}
           >
             <option value="">Primary Goal</option>
-            <option value="Quick">Quick & Easy</option>
+            <option value="Quick & Easy">Quick & Easy</option>
             <option value="Healthy">Healthy Eating</option>
             <option value="Gourmet">Gourmet Cooking</option>
           </select>

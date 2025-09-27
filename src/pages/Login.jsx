@@ -12,14 +12,29 @@ function Login({ onLoginSuccess }) {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // 🔥 Simulate login success/failure
-    if (formData.email === "demo@example.com" && formData.password === "1234") {
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Invalid credentials");
+      }
+
+      const userData = await response.json(); // this will be the full profile JSON
+
       toast.success("Login Successful!");
-      onLoginSuccess({ username: "DemoUser" }); // ← fake user
-    } else {
-      toast.error("Login Failed! Check email/password.");
+      onLoginSuccess(userData); // pass the whole object up
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Login failed! Please check your email/password.");
     }
   };
 

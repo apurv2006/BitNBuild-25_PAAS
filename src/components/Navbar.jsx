@@ -1,6 +1,12 @@
 import { Menu } from "lucide-react";
 
-function Navbar({ onLoginClick, onSignupClick }) {
+function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
+  const getShortEmail = (email) => {
+    if (!email) return "";
+    const [name, domain] = email.split("@");
+    return `${name.slice(0, 3)}...@${domain}`;
+  };
+
   return (
     <div className="navbar bg-base-100 shadow-md">
       <div className="flex-1">
@@ -14,16 +20,31 @@ function Navbar({ onLoginClick, onSignupClick }) {
           <li><a href="#recipe-generator">Recipe Generator</a></li>
           <li><a href="#cooking-flow">Cooking Flow</a></li>
           <li><a href="#nutrition">Nutrition</a></li>
-          <li>
-            <button className="btn btn-ghost" onClick={onLoginClick}>
-              Login
-            </button>
-          </li>
-          <li>
-            <button className="btn btn-ghost" onClick={onSignupClick}>
-              Sign Up
-            </button>
-          </li>
+
+          {currentUser ? (
+            <li className="flex items-center gap-2 font-medium text-gray-700">
+              {getShortEmail(currentUser.email)}
+              <button 
+                className="btn btn-sm btn-outline"
+                onClick={onLogout}
+              >
+                Logout
+              </button>
+            </li>
+          ) : (
+            <>
+              <li>
+                <button className="btn btn-ghost" onClick={onLoginClick}>
+                  Login
+                </button>
+              </li>
+              <li>
+                <button className="btn btn-ghost" onClick={onSignupClick}>
+                  Sign Up
+                </button>
+              </li>
+            </>
+          )}
         </ul>
 
         {/* Mobile Hamburger Menu */}
@@ -39,16 +60,31 @@ function Navbar({ onLoginClick, onSignupClick }) {
             <li><a href="#recipe-generator">Recipe Generator</a></li>
             <li><a href="#cooking-flow">Cooking Flow</a></li>
             <li><a href="#nutrition">Nutrition</a></li>
-            <li>
-              <button className="btn btn-ghost" onClick={onLoginClick}>
-                Login
-              </button>
-            </li>
-            <li>
-              <button className="btn btn-ghost" onClick={onSignupClick}>
-                Sign Up
-              </button>
-            </li>
+
+            {currentUser ? (
+              <li className="flex items-center gap-2 font-medium text-gray-700">
+                {getShortEmail(currentUser.email)}
+                <button 
+                  className="btn btn-sm btn-outline"
+                  onClick={onLogout}
+                >
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <button className="btn btn-ghost" onClick={onLoginClick}>
+                    Login
+                  </button>
+                </li>
+                <li>
+                  <button className="btn btn-ghost" onClick={onSignupClick}>
+                    Sign Up
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

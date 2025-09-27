@@ -12,17 +12,18 @@ import { Toaster } from "react-hot-toast";
 function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null); // ← NEW: Store logged-in user
+  const [currentUser, setCurrentUser] = useState(null);
 
   return (
     <div className="flex flex-col min-h-screen bg-base-200">
-      <Navbar 
+      <Navbar
         onLoginClick={() => setShowLogin(true)}
         onSignupClick={() => setShowSignup(true)}
-        currentUser={currentUser} // optional for Navbar greetings
+        currentUser={currentUser}
+        onLogout={() => setCurrentUser(null)}
       />
 
-      {/* Sections */}
+      {/* Main Sections */}
       <main className="flex-1">
         {/* Hero Section */}
         <section
@@ -47,7 +48,7 @@ function App() {
           id="recipe-generator"
           className="min-h-screen flex flex-col items-center justify-center bg-base-100 p-10"
         >
-          <RecipeGenerator />
+          <RecipeGenerator currentUser={currentUser} />
         </section>
 
         {/* Cooking Workflow Section */}
@@ -76,14 +77,14 @@ function App() {
       {/* Footer */}
       <Footer />
 
-      {/* Modals */}
+      {/* Login Modal */}
       {showLogin && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="relative w-full max-w-md">
-            <Login 
+            <Login
               onLoginSuccess={(user) => {
-                setCurrentUser(user); // ← update current user
-                setShowLogin(false);  // close modal
+                setCurrentUser(user);
+                setShowLogin(false);
               }}
             />
             <button
@@ -96,13 +97,14 @@ function App() {
         </div>
       )}
 
+      {/* Signup Modal */}
       {showSignup && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="relative w-full max-w-2xl">
-            <Signup 
+            <Signup
               onSignupSuccess={(user) => {
-                setCurrentUser(user); // ← update current user
-                setShowSignup(false);  // close modal
+                setCurrentUser(user);
+                setShowSignup(false);
               }}
             />
             <button
