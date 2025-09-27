@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -39,15 +40,17 @@ function Login({ onLoginSuccess }) {
   };
 
   return (
-    <div className="card w-full shadow-xl bg-base-100">
-      <div className="card-body">
-        <h2 className="text-2xl font-bold text-center">Login</h2>
+    // Updated container with sleek design and dark mode
+    <div className="w-full max-w-sm p-8 rounded-2xl shadow-2xl bg-white dark:bg-gray-800 transition-colors duration-500">
+      <div className="card-body p-0">
+        <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">Login</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Updated inputs with sleek design and dark mode */}
           <input
             type="email"
             name="email"
             placeholder="Email"
-            className="input input-bordered w-full"
+            className="input input-bordered w-full bg-gray-100 dark:bg-gray-700 dark:text-white border-none focus:outline-none placeholder-gray-500 dark:placeholder-gray-400"
             onChange={handleChange}
             required
           />
@@ -55,11 +58,12 @@ function Login({ onLoginSuccess }) {
             type="password"
             name="password"
             placeholder="Password"
-            className="input input-bordered w-full"
+            className="input input-bordered w-full bg-gray-100 dark:bg-gray-700 dark:text-white border-none focus:outline-none placeholder-gray-500 dark:placeholder-gray-400"
             onChange={handleChange}
             required
           />
-          <button type="submit" className="btn btn-primary w-full">
+          {/* Updated button with color for dark mode */}
+          <button type="submit" className="btn btn-primary w-full bg-indigo-600 hover:bg-indigo-700 text-white dark:bg-indigo-500 dark:hover:bg-indigo-600">
             Login
           </button>
         </form>

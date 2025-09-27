@@ -1,6 +1,22 @@
-import { Menu } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, Sun, Moon } from "lucide-react";
 
 function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const isDark = localStorage.getItem('theme') === 'dark' || (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme'));
+    setIsDarkMode(isDark);
+    document.documentElement.classList.toggle("dark", isDark);
+  }, []);
+
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    document.documentElement.classList.toggle("dark", newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
+
   const getShortEmail = (email) => {
     if (!email) return "";
     const [name, domain] = email.split("@");
@@ -8,7 +24,7 @@ function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-md">
+    <div className="navbar bg-base-100 shadow-md dark:bg-gray-900 dark:text-white transition-colors duration-500">
       <div className="flex-1">
         <a href="#home" className="btn btn-ghost normal-case text-xl">
           🍳 GourmetNet
@@ -20,11 +36,15 @@ function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
           <li><a href="#recipe-generator">Recipe Generator</a></li>
           <li><a href="#cooking-flow">Cooking Flow</a></li>
           <li><a href="#nutrition">Nutrition</a></li>
-
+          <li className="ml-4">
+            <button onClick={toggleDarkMode}>
+              {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+            </button>
+          </li>
           {currentUser ? (
             <li className="flex items-center gap-2 font-medium text-gray-700">
               {getShortEmail(currentUser.email)}
-              <button 
+              <button
                 className="btn btn-sm btn-outline"
                 onClick={onLogout}
               >
@@ -54,17 +74,22 @@ function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
           </label>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 dark:bg-gray-900 rounded-box w-52"
           >
             <li><a href="#home">Home</a></li>
             <li><a href="#recipe-generator">Recipe Generator</a></li>
             <li><a href="#cooking-flow">Cooking Flow</a></li>
             <li><a href="#nutrition">Nutrition</a></li>
-
+            <li>
+              <button onClick={toggleDarkMode} className="flex gap-2">
+                {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
+                <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+              </button>
+            </li>
             {currentUser ? (
               <li className="flex items-center gap-2 font-medium text-gray-700">
                 {getShortEmail(currentUser.email)}
-                <button 
+                <button
                   className="btn btn-sm btn-outline"
                   onClick={onLogout}
                 >
