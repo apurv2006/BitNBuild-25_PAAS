@@ -85,7 +85,8 @@ def run_validation_phase(ideas, user_profile):
 # ----------------- Phase 3: Elaboration ----------------- #
 def run_elaboration_phase(winning_idea, ingredients, user_profile):
     prompt = f"""
-    You are a professional chef. Create a full recipe for '{winning_idea}'.
+    You are a professional chef. Create a **structured JSON recipe** for '{winning_idea}'.
+    
     User Profile:
     Allergies: {user_profile.get('allergies', [])}
     Diet: {user_profile.get('diet', 'None')}
@@ -97,42 +98,66 @@ def run_elaboration_phase(winning_idea, ingredients, user_profile):
     Primary Goal: {user_profile.get('primary_goal', 'Quick & Easy')}
     Available Ingredients: {ingredients}
 
-    Include:
-    - Final recipe title
-    - Ingredient list with quantities
-    - Step-by-step cooking instructions
-    - Flavor guidance based on flavor profile
-    - Spice adjustment based on spice level
-    - Chef's notes and tips
+    Instructions:
+    1. Output **JSON only**.
+    2. Structure must include:
+       - "title": string (recipe title)
+       - "ingredients": array of strings with quantities
+       - "steps": array of objects, each with:
+          - "id": integer
+          - "title": string
+          - "description": string
+          - "time": estimated time in seconds
+       - "flavor_guidance": string
+       - "spice_adjustment": string
+       - "chef_notes": string
+
+    Make sure JSON is valid and can be parsed programmatically.
     """
+
     response = model.generate_content(prompt)
+
+    # Try to parse JSON safely
+    try:
+        recipe_json = json.loads(response.text.strip())
+    except json.JSONDecodeError:
+        # fallback in case model returns invalid JSON
+        recipe_json = {
+            "title": winning_idea,
+            "ingredients": [],
+            "steps": [],
+            "flavor_guidance": "",
+            "spice_adjustment": "",
+            "chef_notes": ""
+        }
+
     print("🍳 Elaboration Phase: Recipe Generated")
-    return response.text
+    return recipe_json
 
 # ----------------- Example Run ----------------- #
-if __name__ == "__main__":
-    sample_user_profile = {
-        "username": "ChefRavi",
-        "diet": "Vegetarian",
-        "allergies": ["Gluten", "Dairy"],
-        "favorite_cuisines": ["Italian (Tuscan)"],
-        "adventurousness": 4,
-        "spice_level": "Medium",
-        "flavor_profile": {"savory": 5, "sweet": 2, "sour": 4},
-        "ingredients_loved": "garlic, ginger, avocado",
-        "ingredients_hated": "mushrooms, cilantro",
-        "primary_goal": "Quick & Easy"
-    }
+# if __name__ == "__main__":
+#     sample_user_profile = {
+#         "username": "ChefRavi",
+#         "diet": "Vegetarian",
+#         "allergies": ["Gluten", "Dairy"],
+#         "favorite_cuisines": ["Italian (Tuscan)"],
+#         "adventurousness": 4,
+#         "spice_level": "Medium",
+#         "flavor_profile": {"savory": 5, "sweet": 2, "sour": 4},
+#         "ingredients_loved": "garlic, ginger, avocado",
+#         "ingredients_hated": "mushrooms, cilantro",
+#         "primary_goal": "Quick & Easy"
+#     }
 
-    available_ingredients = "chicken breast, cannellini beans, rosemary, spinach"
+#     available_ingredients = "chicken breast, cannellini beans, rosemary, spinach"
 
-    print(f"🚀 Starting GourmetNet pipeline for {sample_user_profile['username']}...\n")
+#     print(f"🚀 Starting GourmetNet pipeline for {sample_user_profile['username']}...\n")
 
-    # Run pipeline
-    ideas = run_ideation_phase(available_ingredients, sample_user_profile)
-    selected_idea = run_validation_phase(ideas, sample_user_profile)
-    final_recipe = run_elaboration_phase(selected_idea, available_ingredients, sample_user_profile)
+#     # Run pipeline
+#     ideas = run_ideation_phase(available_ingredients, sample_user_profile)
+#     selected_idea = run_validation_phase(ideas, sample_user_profile)
+#     final_recipe = run_elaboration_phase(selected_idea, available_ingredients, sample_user_profile)
 
-    print("\n========== FINAL RECIPE ==========")
-    print(final_recipe)
-    print("================================")
+#     print("\n========== FINAL RECIPE ==========")
+#     print(final_recipe)
+#     print("================================")
