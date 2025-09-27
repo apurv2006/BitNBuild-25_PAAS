@@ -1,105 +1,198 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
 
-function RecipeGenerator({ currentUser }) {
-  const [ingredients, setIngredients] = useState("");
-  const [recipeResult, setRecipeResult] = useState(null);
-  const [loading, setLoading] = useState(false);
+function RecipeGenerator() {
   const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    allergies: [],
+    diet: "",
+    favorite_cuisine: "",
+    adventurousness: "",
+    spice_level: "",
+    ingredients_love: "",
+    ingredients_hate: "",
+    primary_goal: "",
+  });
 
-  const handleSubmit = async (e) => {
-    e?.preventDefault();
+  // Example recipe output (replace later with backend data)
+  const recipe = {
+    title: "Spicy Tomato Pasta",
+    ingredients: ["Tomato", "Onion", "Garlic", "Pasta", "Olive Oil", "Chili Flakes"],
+    steps: [
+      "Boil pasta until al dente.",
+      "Sauté onion and garlic in olive oil.",
+      "Add tomato and chili flakes.",
+      "Mix with pasta and serve hot.",
+    ],
+  };
 
-    if (!currentUser) {
-      toast.error("Please log in to generate recipes.");
-      return;
-    }
-
-    const trimmedIngredients = ingredients.trim();
-    if (!trimmedIngredients) {
-      toast.error("Please enter your available ingredients.");
-      return;
-    }
-
-    const payload = {
-      ...currentUser, // send all profile info
-      ingredients: trimmedIngredients.split(",").map((i) => i.trim()), // array of ingredients
-    };
-
-    try {
-      setLoading(true);
-      const res = await fetch("http://127.0.0.1:5000/api/generate-recipe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!res.ok) throw new Error("Failed to generate recipe");
-
-      const data = await res.json();
-      setRecipeResult(data.recipe);
-      setShowForm(false);
-    } catch (err) {
-      console.error(err);
-      toast.error("Error generating recipe. Try again!");
-    } finally {
-      setLoading(false);
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (type === "checkbox") {
+      setFormData((prev) => ({
+        ...prev,
+        allergies: checked
+          ? [...prev.allergies, value]
+          : prev.allergies.filter((item) => item !== value),
+      }));
+    } else {
+      setFormData({ ...formData, [name]: value });
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Recipe Form Data:", formData); // send to backend
+    setShowForm(false); // auto-close after submit
+  };
+
   return (
-    <section className="min-h-screen flex flex-col items-center justify-start bg-base-100 p-10 relative">
-      <div className="flex gap-4 mb-4">
-        <button
-          className="btn btn-primary"
-          onClick={() => setShowForm((prev) => !prev)}
-        >
-          {showForm ? "Close Form" : "Enter Ingredients"}
-        </button>
-      </div>
+    <section
+      id="recipe-generator"
+      className="min-h-screen flex flex-col items-center justify-start bg-base-100 p-10 relative"
+    >
+      {/* Try New Recipe Button */}
+      <button
+        className="btn btn-primary mb-4 absolute top-4 left-1/2 transform -translate-x-1/2"
+        onClick={() => setShowForm(true)}
+      >
+        Try New Recipe
+      </button>
 
-      {/* Ingredients Form */}
+      {/* Form Modal */}
       {showForm && (
-        <form
-          className="bg-white p-6 rounded shadow-md w-full max-w-md mb-6"
-          onSubmit={handleSubmit}
-        >
-          <label className="font-semibold mb-2 block">
-            Ingredients you have (comma separated):
-          </label>
-          <input
-            type="text"
-            name="ingredients"
-            placeholder="e.g., tomato, cheese, avocado"
-            className="input input-bordered w-full mb-4"
-            value={ingredients}
-            onChange={(e) => setIngredients(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
-          >
-            Generate Recipe
-          </button>
-        </form>
-      )}
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-base-100 p-6 rounded shadow-lg w-full max-w-md relative">
+            <button
+              className="absolute top-2 right-2 btn btn-sm btn-error"
+              onClick={() => setShowForm(false)}
+            >
+              ✕
+            </button>
+            <h2 className="text-xl font-bold mb-4 text-center">Recipe Preferences</h2>
+            <form className="space-y-3" onSubmit={handleSubmit}>
+              {/* Allergies */}
+              <div>
+                <label className="font-semibold">Allergies</label>
+                <div className="flex gap-4">
+                  {["Dairy", "Gluten", "Nuts"].map((item) => (
+                    <label key={item} className="flex items-center gap-1">
+                      <input
+                        type="checkbox"
+                        name="allergies"
+                        value={item}
+                        onChange={handleChange}
+                      />
+                      {item}
+                    </label>
+                  ))}
+                </div>
+              </div>
 
-      {/* Display Generated Recipe */}
-      {recipeResult && (
-        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl mt-6">
-          <h2 className="text-2xl font-bold mb-2">{recipeResult.title}</h2>
-          <p className="whitespace-pre-line text-gray-800">
-            {recipeResult.recipe_text}
-          </p>
+              {/* Diet */}
+              <select
+                name="diet"
+                className="select select-bordered w-full"
+                onChange={handleChange}
+              >
+                <option value="">Select Diet</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+              </select>
+
+              {/* Favorite Cuisine */}
+              <input
+                type="text"
+                name="favorite_cuisine"
+                placeholder="Favorite Cuisines (comma separated)"
+                className="input input-bordered w-full"
+                onChange={handleChange}
+                required
+              />
+
+              {/* Adventurousness */}
+              <input
+                type="text"
+                name="adventurousness"
+                placeholder="Adventurousness (1-5)"
+                className="input input-bordered w-full"
+                onChange={handleChange}
+                required
+              />
+
+              {/* Spice Level */}
+              <select
+                name="spice_level"
+                className="select select-bordered w-full"
+                onChange={handleChange}
+              >
+                <option value="">Spice Level</option>
+                <option value="Mild">Mild</option>
+                <option value="Medium">Medium</option>
+                <option value="Hot">Hot</option>
+              </select>
+
+              {/* Ingredients */}
+              <input
+                type="text"
+                name="ingredients_love"
+                placeholder="Ingredients you love"
+                className="input input-bordered w-full"
+                onChange={handleChange}
+              />
+              <input
+                type="text"
+                name="ingredients_hate"
+                placeholder="Ingredients you dislike"
+                className="input input-bordered w-full"
+                onChange={handleChange}
+              />
+
+              {/* Primary Goal */}
+              <select
+                name="primary_goal"
+                className="select select-bordered w-full"
+                onChange={handleChange}
+              >
+                <option value="">Primary Goal</option>
+                <option value="Quick">Quick & Easy</option>
+                <option value="Healthy">Healthy Eating</option>
+                <option value="Gourmet">Gourmet Cooking</option>
+              </select>
+
+              <button type="submit" className="btn btn-primary w-full">
+                Submit
+              </button>
+            </form>
+          </div>
         </div>
       )}
 
-      {!recipeResult && !showForm && (
-        <p className="mt-10 text-gray-500 text-center">
-          Your generated recipe will appear here.
-        </p>
-      )}
+      {/* Layout: Recipe + Shopping List */}
+      <div className="flex flex-row w-full mt-20 gap-10">
+        {/* Recipe Output */}
+        <div className="flex-1 bg-white p-6 rounded-lg shadow">
+          <h2 className="text-2xl font-bold mb-4">{recipe.title}</h2>
+          <ol className="list-decimal list-inside space-y-2 text-gray-700">
+            {recipe.steps.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Shopping List Sidebar */}
+        <div className="w-1/3 bg-base-200 p-6 rounded-lg shadow">
+          <h2 className="text-xl font-bold mb-4">🛒 Shopping List</h2>
+          <ul className="space-y-2">
+            {recipe.ingredients.map((item) => (
+              <li key={item} className="flex items-center gap-2">
+                <input type="checkbox" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </section>
   );
 }
