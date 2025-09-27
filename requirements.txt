@@ -1,0 +1,7 @@
+npm create vite@latest
+npm install -D tailwindcss@3.4.17 postcss autoprefixer
+npx tailwindcss init -p
+npm install react-router-dom axios react-hot-toast lucide-react daisyui react-icons
+npm install react-router-dom axios react-hot-toast lucide-react daisyui react-icons framer-motion recharts
+
+npm run dev to run the project
