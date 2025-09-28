@@ -20,32 +20,45 @@ function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
   const getShortEmail = (email) => {
     if (!email) return "";
     const [name, domain] = email.split("@");
+   
     return `${name.slice(0, 3)}...@${domain}`;
   };
 
   return (
-    <div className="navbar bg-base-100 shadow-md dark:bg-gray-900 dark:text-white transition-colors duration-500">
+    
+    <div className="fixed top-0 inset-x-0 z-50 flex items-center justify-between bg-base-100/80 dark:bg-gray-900/80 backdrop-blur-sm transition-all duration-500 py-3 px-4 md:px-8">
+      {/* Logo on the left side */}
       <div className="flex-1">
-        <a href="#home" className="btn btn-ghost normal-case text-xl">
+        <a href="#home" className="btn btn-ghost normal-case text-xl text-gray-900 dark:text-gray-100 font-poppins">
           🍳 GourmetNet
         </a>
       </div>
+      
+      {/* Navigation links on the right side */}
       <div className="flex-none">
-        <ul className="menu menu-horizontal px-1 hidden md:flex">
-          <li><a href="#home">Home</a></li>
-          <li><a href="#recipe-generator">Recipe Generator</a></li>
-          <li><a href="#cooking-flow">Cooking Flow</a></li>
-          <li><a href="#nutrition">Nutrition</a></li>
+        <ul className="flex items-center gap-4 px-1 hidden md:flex font-lato">
+          <li>
+            <a href="#home" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Home</a>
+          </li>
+          <li>
+            <a href="#recipe-generator" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Recipe Generator</a>
+          </li>
+          <li>
+            <a href="#cooking-flow" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Cooking Flow</a>
+          </li>
+          <li>
+            <a href="#nutrition" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Nutrition</a>
+          </li>
           <li className="ml-4">
-            <button onClick={toggleDarkMode}>
+            <button onClick={toggleDarkMode} className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">
               {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
             </button>
           </li>
           {currentUser ? (
-            <li className="flex items-center gap-2 font-medium text-gray-700">
+            <li className="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300">
               {getShortEmail(currentUser.email)}
-              <button
-                className="btn btn-sm btn-outline"
+              <button 
+                className="btn btn-sm btn-outline text-gray-700 dark:text-gray-300 font-bold"
                 onClick={onLogout}
               >
                 Logout
@@ -54,12 +67,12 @@ function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
           ) : (
             <>
               <li>
-                <button className="btn btn-ghost" onClick={onLoginClick}>
+                <button className="btn btn-ghost text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold" onClick={onLoginClick}>
                   Login
                 </button>
               </li>
               <li>
-                <button className="btn btn-ghost" onClick={onSignupClick}>
+                <button className="btn btn-ghost text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold" onClick={onSignupClick}>
                   Sign Up
                 </button>
               </li>
@@ -74,23 +87,23 @@ function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
           </label>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 dark:bg-gray-900 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 dark:bg-gray-900 rounded-box w-52 font-lato"
           >
-            <li><a href="#home">Home</a></li>
-            <li><a href="#recipe-generator">Recipe Generator</a></li>
-            <li><a href="#cooking-flow">Cooking Flow</a></li>
-            <li><a href="#nutrition">Nutrition</a></li>
+            <li><a href="#home" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Home</a></li>
+            <li><a href="#recipe-generator" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Recipe Generator</a></li>
+            <li><a href="#cooking-flow" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Cooking Flow</a></li>
+            <li><a href="#nutrition" className="text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">Nutrition</a></li>
             <li>
-              <button onClick={toggleDarkMode} className="flex gap-2">
+              <button onClick={toggleDarkMode} className="flex gap-2 text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold">
                 {isDarkMode ? <Sun size={24} /> : <Moon size={24} />}
                 <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
               </button>
             </li>
             {currentUser ? (
-              <li className="flex items-center gap-2 font-medium text-gray-700">
+              <li className="flex items-center gap-2 font-medium text-gray-700 dark:text-gray-300">
                 {getShortEmail(currentUser.email)}
                 <button
-                  className="btn btn-sm btn-outline"
+                  className="btn btn-sm btn-outline text-gray-700 dark:text-gray-300"
                   onClick={onLogout}
                 >
                   Logout
@@ -99,12 +112,12 @@ function Navbar({ onLoginClick, onSignupClick, currentUser, onLogout }) {
             ) : (
               <>
                 <li>
-                  <button className="btn btn-ghost" onClick={onLoginClick}>
+                  <button className="btn btn-ghost text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold" onClick={onLoginClick}>
                     Login
                   </button>
                 </li>
                 <li>
-                  <button className="btn btn-ghost" onClick={onSignupClick}>
+                  <button className="btn btn-ghost text-gray-900 dark:text-gray-100 hover:text-gray-700 dark:hover:text-white transition-colors duration-200 font-bold" onClick={onSignupClick}>
                     Sign Up
                   </button>
                 </li>

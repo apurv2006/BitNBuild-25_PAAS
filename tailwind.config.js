@@ -8,7 +8,21 @@ export default {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+        lato: ['Lato', 'sans-serif'],
+      },
+      animation: {
+        'pop-and-breathe': 'pop-and-breathe 2s ease-in-out infinite',
+      },
+      keyframes: {
+        'pop-and-breathe': {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+        }
+      }
+    },
   },
   plugins: [daisyui],
 }
