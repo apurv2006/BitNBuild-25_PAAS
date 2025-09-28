@@ -15,6 +15,9 @@ function App() {
   const [showSignup, setShowSignup] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
 
+  // --- MODIFICATION 1: Add state to hold the recipe steps ---
+  const [currentRecipeSteps, setCurrentRecipeSteps] = useState([]);
+
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-500 font-lato">
       <Navbar
@@ -60,7 +63,11 @@ function App() {
           id="recipe-generator"
           className="min-h-screen flex flex-col items-center justify-center bg-base-100 p-10 dark:bg-gray-900"
         >
-          <RecipeGenerator currentUser={currentUser} />
+          {/* --- MODIFICATION 2: Pass the state setter to RecipeGenerator --- */}
+          <RecipeGenerator 
+            currentUser={currentUser} 
+            onRecipeReady={setCurrentRecipeSteps} 
+          />
         </section>
 
         {/* Cooking Workflow Section */}
@@ -71,7 +78,8 @@ function App() {
           <h2 className="text-3xl font-bold text-gray-900 mb-6 dark:text-white">
             Cooking Workflow
           </h2>
-          <CookingWorkflow />
+          {/* --- MODIFICATION 3: Pass the steps state to CookingWorkflow --- */}
+          <CookingWorkflow recipeSteps={currentRecipeSteps} />
         </section>
 
         {/* Nutrition Information Section */}
